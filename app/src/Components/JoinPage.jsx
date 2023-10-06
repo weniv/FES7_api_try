@@ -16,6 +16,7 @@ const JoinPage = ()=>{
     const [password, setPassword] = useState("");
     const [accountname, setAccountname] = useState("");
     const [imgSrc, setImgSrc] = useState("https://api.mandarin.weniv.co.kr/Ellipse.png")
+    const [info, setInfo] = useState("");
 
     const join = async (joinData)=>{
         const reqUrl = "https://api.mandarin.weniv.co.kr/user/";
@@ -42,8 +43,13 @@ const JoinPage = ()=>{
     const inputAccountname = (e)=>{
         setAccountname(e.target.value);
     }
+    const inputInfo = (e) =>{
+        setInfo(e.target.value);
+    }
+
     const uploadImage = async (imageFile)=>{
-        const reqUrl = "https://api.mandarin.weniv.co.kr/image/uploadfile";
+        const baseUrl = "https://api.mandarin.weniv.co.kr/"
+        const reqUrl = baseUrl+"image/uploadfile";
         // 폼데이터 만들기
         const form = new FormData();
         // 폼데이터에 값 추가하기
@@ -52,9 +58,12 @@ const JoinPage = ()=>{
         // 폼바디에 넣어서 요청하기
         const res = await fetch(reqUrl,{
             method:"POST",
-            
-        })
-
+            body:form
+        });
+        const json = await res.json();
+        console.log(baseUrl+json.filename);
+        const imageUrl = baseUrl+json.filename;
+        setImgSrc(imageUrl);
     }
     const handleChangeImage = (e)=>{
         // 파일 가져오기
@@ -67,7 +76,9 @@ const JoinPage = ()=>{
                 username:username,
                 email:email,
                 password:password,
-                accountname:accountname
+                accountname:accountname,
+                intro:info,
+                image:imgSrc
             }
         }
         join(joinData);
@@ -93,7 +104,7 @@ const JoinPage = ()=>{
             <label htmlFor="profileImg">
                 <img src={imgSrc} alt="" id="imagePre"/>
             </label>
-            <input type="file" id="profileImg" name="image" accept="image/*" />
+            <input type="file" onChange={handleChangeImage} id="profileImg" name="image" accept="image/*" />
             <div >
                 <label htmlFor="userNameInput">사용자 이름</label>
                 <input value={username} onChange={inputUsername} type="text" id="userNameInput" name="username" placeholder="2~10자 이내여야 합니다."/>
@@ -104,7 +115,7 @@ const JoinPage = ()=>{
             </div>
             <div>
                 <label htmlFor="userIntroInput">소개</label>
-                <input type="text" id="userIntroInput" name="intro" placeholder="자신과 판매할 상품에 대해 소개해 주세요."/>
+                <input onChange={inputInfo} type="text" id="userIntroInput" name="intro" placeholder="자신과 판매할 상품에 대해 소개해 주세요."/>
             </div>
             <button type="button" onClick={submitJoin} >감귤마켓 시작하기</button>
         </section>
