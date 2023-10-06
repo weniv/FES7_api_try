@@ -15,20 +15,26 @@ function LoginPage() {
                 "password":password
             }
         };
-        // 로그인해서 token꺼내기~!
-        const res = await fetch(reqUrl,{
-            method:"POST",
-            headers:{
-                "Content-type":"application/json"
-            },
-            body:JSON.stringify(loginData)
-        });
-        const json = await res.json();
-        console.log(json);
-        const token = json.user.token;
-        console.log(token);
-        // 로컬스토리지에 토큰 저장하기.
-        localStorage.setItem("token",token);
+        try {
+            // 로그인해서 token꺼내기~!
+            const res = await fetch(reqUrl,{
+                method:"POST",
+                headers:{
+                    "Content-type":"application/json"
+                },
+                body:JSON.stringify(loginData)
+            });
+            const json = await res.json();
+            console.log(json);
+
+            const token = json.user.token;
+            console.log(token);
+            // 로컬스토리지에 토큰 저장하기.
+            localStorage.setItem("token",token);
+        } catch (error) {
+            alert("로그인에 실패했습니다!")
+        }
+        
     }
 
     const inputEmail = (e)=>{
